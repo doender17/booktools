@@ -106,40 +106,6 @@ def page_order_signature_no_duplex(num_pages):
     print(reordered)
     return reordered
 
-def booklet_signatures_order(num_pages, pages_per_signature=16):
-    """
-    Divide pages into signatures (booklets) for binding.
-    Each signature has a multiple of 4 pages (default 16 pages = 4 sheets).
-    Returns a list of page numbers (or None for blanks) in correct order.
-    """
-    signatures = []
-    current_page = 1
-
-    while current_page <= num_pages:
-        # Pages in this signature
-        remaining = num_pages - current_page + 1
-        sig_size = min(pages_per_signature, remaining)
-
-        # Round up to multiple of 4
-        padded_size = ((sig_size + 3) // 4) * 4
-        pages = list(range(current_page, current_page + sig_size))
-        pages += [None] * (padded_size - sig_size)
-
-        sig_order = []
-        total = len(pages)
-        for i in range(0, total // 2, 2):
-            left = total - i - 1
-            right = i
-            inner_left = i + 1
-            inner_right = total - i - 2
-            sig_order.extend([pages[left], pages[right], pages[inner_left], pages[inner_right]])
-
-        signatures.append(sig_order)
-        current_page += sig_size
-
-    # Flatten the list of signatures
-    return [page for sig in signatures for page in sig]
-
 def main():
     parser = argparse.ArgumentParser(description="Wrap pdfjam to create 2-up or other layouts.")
     parser.add_argument("input", help="Input PDF file")
